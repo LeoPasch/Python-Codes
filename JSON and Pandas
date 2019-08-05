@@ -1,0 +1,52 @@
+import json as js
+import pandas as pd
+from pandas.io.json import json_normalize
+import glob
+import urllib3
+import time
+import requests as rq
+from bs4 import BeautifulSoup
+import os
+import shutil
+json = rq.get('https://loja.eudora.com.br/api/catalog_system/pub/products/search?&_from=1&_to=30')
+soup = json.json()
+#print(type(soup))
+#print(type(soup[1]))# each element of the list is a distinct product
+
+count=0
+blk_lst=[]
+df = pd.DataFrame(columns=['productId','productName','brandId','imageText','imageUrl','descProd'])
+
+for i in soup:
+    count+=1
+    for j in i['items']:
+        for k in j['images']:
+            bs = BeautifulSoup(i['description'], 'html.parser')
+            desc_txt = bs.get_text()
+           # print(count,'<-->',i['productId'],i['productName'],i['brandId'],'<-->', desc_txt ,k['imageText'], k['imageUrl'])
+            a = i['productId']
+            print(a)
+            print(type(a))
+            b = i['productName']
+            print(b)
+            print(type(b))
+            c = i['brandId']
+            print(c)
+            print(type(c))
+            d = k['imageText']
+            print(d)
+            print(type(d))
+            e = k['imageUrl']
+            print(e)
+            print(type(e))
+            f = desc_txt
+            print(f)
+            print(type(f))
+            #df['productId'] = a
+            #df['productName'] = b
+            #df['brandId'] = c
+            #df['imageText'] = d
+            #df['imageUrl '] = e
+            #df['descProd'] = f
+            print('DF ->TEST',df.append(df[{'productId':i['productId'],'productName':i['productName'],'brandId':i['brandId'],'imageText':k['imageText'],'imageUrl':k['imageUrl'],'descProd':f}] ,ignore_index=True))
+            print('LEN -> DF:  ',len(df))
